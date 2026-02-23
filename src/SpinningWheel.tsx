@@ -4,11 +4,14 @@ import { pickWinnerIndex, getTargetAngleForIndex } from './wheelUtils';
 
 interface SpinningWheelProps {
   options: WheelOption[];
+  playerInfo: { email: string; phone: string };
+  onFinish: () => void;
 }
 
 const WHEEL_SIZE = 400;
 const CENTER = WHEEL_SIZE / 2;
 const RADIUS = CENTER - 10;
+const GOOGLE_SHEET_URL = process.env.REACT_APP_GOOGLE_SHEET_URL || '';
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, font: string): string[] {
   ctx.font = font;
@@ -44,14 +47,36 @@ function autoFontSize(
   return minSize;
 }
 
-function SpinningWheel({ options }: SpinningWheelProps) {
+function SpinningWheel({ options, playerInfo, onFinish }: SpinningWheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
+  const [showResult, setShowResult] = useState(false);
   const animationRef = useRef<number>(0);
 
   const totalRatio = options.reduce((sum, o) => sum + o.ratio, 0);
+
+  const saveToGoogleSheet = async (winnerLabel: string) => {
+    if (!GOOGLE_SHEET_URL) {
+      console.warn('Google Sheet URL not configured, skipping log.');
+      return;
+    }
+    try {
+      const params = new URLSearchParams({
+        email: playerInfo.email,
+        phone: playerInfo.phone,
+        winner: winnerLabel,
+        timestamp: new Date().toISOString(),
+      });
+      await fetch(`${GOOGLE_SHEET_URL}?${params.toString()}`, {
+        method: 'GET',
+        mode: 'no-cors',
+      });
+    } catch (err) {
+      console.error('Failed to log to Google Sheet:', err);
+    }
+  };
 
   const drawWheel = useCallback((currentRotation: number) => {
     const canvas = canvasRef.current;
@@ -122,29 +147,34 @@ function SpinningWheel({ options }: SpinningWheelProps) {
     if (spinning) return;
     setSpinning(true);
     setWinner(null);
+    setShowResult(false);
 
-    // Pick winner based on chance percentages
     const winnerIdx = pickWinnerIndex(options);
     const targetAngle = getTargetAngleForIndex(options, winnerIdx);
-    const totalAngle = rotation + targetAngle;
+    
+    // Extra rotations for effect
+    const extraSpins = 5 * 2 * Math.PI;
+    const totalRotationToApply = targetAngle + extraSpins;
 
-    const duration = 4000;
+    const duration = 5000;
     const startTime = performance.now();
     const startRotation = rotation;
 
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease-out cubic for natural deceleration
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const currentRotation = startRotation + totalAngle * eased;
+      const eased = 1 - Math.pow(1 - progress, 4); // Ease-out quartic
+      const currentRotation = startRotation + totalRotationToApply * eased;
       setRotation(currentRotation);
 
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
+        const winnerLabel = options[winnerIdx].label;
         setSpinning(false);
-        setWinner(options[winnerIdx].label);
+        setWinner(winnerLabel);
+        setShowResult(true);
+        saveToGoogleSheet(winnerLabel);
       }
     };
 
@@ -163,9 +193,17 @@ function SpinningWheel({ options }: SpinningWheelProps) {
       <button className="spin-button" onClick={spin} disabled={spinning}>
         {spinning ? 'Spinning...' : 'SPIN!'}
       </button>
-      {winner && (
-        <div className="winner-display">
-          🎉 <strong>{winner}</strong> 🎉
+
+      {showResult && (
+        <div className="result-overlay">
+          <div className="result-modal">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p className="winner-label">You won:</p>
+            <p className="winner-name">{winner}</p>
+            <button className="finish-button" onClick={onFinish}>
+              Return to Login
+            </button>
+          </div>
         </div>
       )}
     </div>

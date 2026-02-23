@@ -11,7 +11,7 @@ function App() {
   const [player, setPlayer] = useState<{ email: string; phone: string } | null>(null);
 
   useEffect(() => {
-    fetch('/wheel-options.json')
+    fetch('wheel-options.json')
       .then((res) => res.json())
       .then((configs: WheelOptionConfig[]) => {
         setOptions(resolveChances(configs));
@@ -19,14 +19,23 @@ function App() {
       .catch((err) => setError(err.message || 'Failed to load wheel options.'));
   }, []);
 
+  const handleFinish = () => {
+    // Reset player to go back to login form
+    setPlayer(null);
+  };
+
   if (error) return <div className="App"><p>{error}</p></div>;
   if (options.length === 0) return <div className="App"><p>Loading...</p></div>;
 
   return (
     <div className="App">
       <h1>🎡 Spinning Wheel</h1>
-      {!player ? (
-        <SpinningWheel options={options} />
+      {player ? (
+        <SpinningWheel 
+          options={options} 
+          playerInfo={player} 
+          onFinish={handleFinish} 
+        />
       ) : (
         <PlayerForm onSubmit={setPlayer} />
       )}

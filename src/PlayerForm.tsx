@@ -56,7 +56,7 @@ function PlayerForm({ onSubmit }: PlayerFormProps) {
           {errors.phone && <span className="form-error">{errors.phone}</span>}
         </div>
         <button type="submit" className="form-submit">
-          Let's Play! 🎡
+          Let's Play!
         </button>
       </form>
     </div>

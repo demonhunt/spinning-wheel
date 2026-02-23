@@ -148,3 +148,77 @@
   transform: scale(1.03);
   box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6);
 }
+
+/* Result Modal */
+.result-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.result-modal {
+  background: #2d3436;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+  width: 400px;
+  transform: scale(1);
+  animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.result-modal h2 {
+  color: #f1c40f;
+  margin: 0 0 16px;
+}
+
+.winner-label {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin: 0 0 8px;
+}
+
+.winner-name {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 32px;
+  background: linear-gradient(135deg, #f1c40f, #e67e22);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.finish-button {
+  padding: 12px 32px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.finish-button:hover {
+  background: #2980b9;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
