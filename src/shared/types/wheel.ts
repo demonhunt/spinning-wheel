@@ -1,10 +1,11 @@
 export interface WheelOptionConfig {
   label: string;
-  ratio: number;
+  ratio?: number;
   color: string;
   chance?: number | null;
 }
 
-export interface WheelOption extends WheelOptionConfig {
+export interface WheelOption extends Omit<WheelOptionConfig, 'ratio'> {
+  ratio: number;
   resolvedChance: number;
 }

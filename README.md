@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# Spinning Wheel
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A localized React spinning wheel app with:
+- configurable wheel options from JSON
+- weighted win chance (`chance`)
+- independent visual slice size (`ratio`)
+- optional winner logging to Google Sheets
 
-## Available Scripts
+## Project Structure
 
-In the project directory, you can run:
+```text
+src/
+  app/
+    App.tsx
+    App.css
 
-### `npm start`
+  features/
+    player/
+      PlayerForm.tsx
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+    wheel/
+      SpinningWheel.tsx        # UI composition for wheel + result modal
+      wheelCanvas.ts           # canvas drawing and label layout
+      useWheelSpin.ts          # spin animation state + winner lifecycle
+      wheelMath.ts             # random winner + landing angle math
+      winnerLogger.ts          # Google Sheet logging side effect
+      options.ts               # typed runtime wrapper for option parser
+      options-core.js          # shared parser/validator (used by app + build script)
+      config/
+        wheel-options.json
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  shared/
+    i18n/
+      index.ts
+      en.ts
+      vi.ts
+    types/
+      player.ts
+      wheel.ts
 
-### `npm test`
+scripts/
+  validate-options.js          # build-time option validation (reuses options-core.js)
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Data Model (`wheel-options.json`)
 
-### `npm run build`
+Each option supports:
+- `label` (required): display text
+- `color` (required): slice color
+- `chance` (optional): winning probability in percent
+- `ratio` (optional): visual slice proportion
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Rules:
+- If `chance` is missing, remaining probability is auto-distributed equally.
+- If `ratio` is missing, it defaults to `1` (equal visual baseline).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Scripts
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `npm start`: validate options, then run dev server
+- `npm run validate`: validate wheel options only
+- `npm run build`: validate options, then create production build
+- `npm run deploy`: publish `build/` to GitHub Pages
 
-### `npm run eject`
+## Environment Variables
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Create `.env.local` if needed:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```env
+REACT_APP_GOOGLE_SHEET_URL=your_google_apps_script_url
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+If not set, winner logging is skipped.

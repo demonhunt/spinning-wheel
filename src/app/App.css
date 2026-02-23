@@ -8,6 +8,7 @@
   justify-content: center;
   color: white;
   font-family: Arial, sans-serif;
+  position: relative;
 }
 
 .App h1 {
@@ -149,7 +150,37 @@
   box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6);
 }
 
-/* Result Modal */
+/* Language Switcher */
+.lang-switcher {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.lang-switcher button {
+  font-size: 1.6rem;
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 2px 4px;
+  opacity: 0.5;
+  transition: opacity 0.2s, border-color 0.2s;
+  line-height: 1;
+}
+
+.lang-switcher button:hover {
+  opacity: 0.85;
+}
+
+.lang-switcher button.active {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+
 .result-overlay {
   position: fixed;
   top: 0;

@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
+import { useTranslation } from '../../shared/i18n';
+import { PlayerInfo } from '../../shared/types/player';
 
 interface PlayerFormProps {
-  onSubmit: (info: { email: string; phone: string }) => void;
+  onSubmit: (info: PlayerInfo) => void;
 }
 
 function PlayerForm({ onSubmit }: PlayerFormProps) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
+  const { t } = useTranslation();
 
   const validate = () => {
     const newErrors: { email?: string; phone?: string } = {};
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'Please enter a valid email address.';
+      newErrors.email = t.emailError;
     }
     if (!/^\+?[\d\s\-()]{7,15}$/.test(phone)) {
-      newErrors.phone = 'Please enter a valid phone number.';
+      newErrors.phone = t.phoneError;
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -30,33 +33,33 @@ function PlayerForm({ onSubmit }: PlayerFormProps) {
 
   return (
     <div className="form-container">
-      <h2>Welcome! 🎉</h2>
-      <p className="form-subtitle">Enter your info to spin the wheel</p>
+      <h2>{t.welcome}</h2>
+      <p className="form-subtitle">{t.formSubtitle}</p>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-field">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">{t.emailLabel}</label>
           <input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder={t.emailPlaceholder}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           {errors.email && <span className="form-error">{errors.email}</span>}
         </div>
         <div className="form-field">
-          <label htmlFor="phone">Phone Number</label>
+          <label htmlFor="phone">{t.phoneLabel}</label>
           <input
             id="phone"
             type="tel"
-            placeholder="+1 234 567 8900"
+            placeholder={t.phonePlaceholder}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
           {errors.phone && <span className="form-error">{errors.phone}</span>}
         </div>
         <button type="submit" className="form-submit">
-          Let's Play!
+          {t.letsPlay}
         </button>
       </form>
     </div>
