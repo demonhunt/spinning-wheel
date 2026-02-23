@@ -1,22 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import './App.css';
 import SpinningWheel from './SpinningWheel';
 import PlayerForm from './PlayerForm';
-import { WheelOption, WheelOptionConfig } from './types';
+import { WheelOptionConfig } from './types';
 import { resolveChances } from './wheelUtils';
+import wheelOptionsConfig from './wheel-options.json';
 
 function App() {
-  const [options, setOptions] = useState<WheelOption[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<{ email: string; phone: string } | null>(null);
 
-  useEffect(() => {
-    fetch('wheel-options.json')
-      .then((res) => res.json())
-      .then((configs: WheelOptionConfig[]) => {
-        setOptions(resolveChances(configs));
-      })
-      .catch((err) => setError(err.message || 'Failed to load wheel options.'));
+  const { options, error } = useMemo(() => {
+    try {
+      return {
+        options: resolveChances(wheelOptionsConfig as WheelOptionConfig[]),
+        error: null,
+      };
+    } catch (err) {
+      return {
+        options: [],
+        error: err instanceof Error ? err.message : 'Failed to load wheel options.',
+      };
+    }
   }, []);
 
   const handleFinish = () => {

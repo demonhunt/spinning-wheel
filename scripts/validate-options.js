@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const filePath = path.join(__dirname, '..', 'public', 'wheel-options.json');
+const filePath = path.join(__dirname, '..', 'src', 'wheel-options.json');
 
 try {
   const raw = fs.readFileSync(filePath, 'utf-8');
