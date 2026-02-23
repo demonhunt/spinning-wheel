@@ -14,10 +14,13 @@ function PlayerForm({ onSubmit }: PlayerFormProps) {
 
   const validate = () => {
     const newErrors: { email?: string; phone?: string } = {};
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const trimmedEmail = email.trim();
+    const trimmedPhone = phone.trim();
+
+    if (trimmedEmail !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       newErrors.email = t.emailError;
     }
-    if (!/^\+?[\d\s\-()]{7,15}$/.test(phone)) {
+    if (trimmedPhone === '' || !/^\+?[\d\s\-()]{7,15}$/.test(trimmedPhone)) {
       newErrors.phone = t.phoneError;
     }
     setErrors(newErrors);
@@ -37,6 +40,19 @@ function PlayerForm({ onSubmit }: PlayerFormProps) {
       <p className="form-subtitle">{t.formSubtitle}</p>
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-field">
+          <label htmlFor="phone">
+            {t.phoneLabel} <span className="required-indicator" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="phone"
+            type="tel"
+            placeholder={t.phonePlaceholder}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          {errors.phone && <span className="form-error">{errors.phone}</span>}
+        </div>
+        <div className="form-field">
           <label htmlFor="email">{t.emailLabel}</label>
           <input
             id="email"
@@ -46,17 +62,6 @@ function PlayerForm({ onSubmit }: PlayerFormProps) {
             onChange={(e) => setEmail(e.target.value)}
           />
           {errors.email && <span className="form-error">{errors.email}</span>}
-        </div>
-        <div className="form-field">
-          <label htmlFor="phone">{t.phoneLabel}</label>
-          <input
-            id="phone"
-            type="tel"
-            placeholder={t.phonePlaceholder}
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-          {errors.phone && <span className="form-error">{errors.phone}</span>}
         </div>
         <button type="submit" className="form-submit">
           {t.letsPlay}

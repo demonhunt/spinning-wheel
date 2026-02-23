@@ -25,7 +25,7 @@ src/
       wheelMath.ts             # random winner + landing angle math
       winnerLogger.ts          # Google Sheet logging side effect
       options.ts               # typed runtime wrapper for option parser
-      options-core.js          # shared parser/validator (used by app + build script)
+      options-core.mjs         # shared parser/validator (used by app + build script)
       config/
         wheel-options.json
 

@@ -2,7 +2,7 @@
  * Shared wheel option parser/validator used by both runtime and build-time validation.
  * Keep this file in plain JS so Node scripts can require it without a TS toolchain.
  */
-function validateAndResolveOptions(configs) {
+export function validateAndResolveOptions(configs) {
   if (!Array.isArray(configs) || configs.length === 0) {
     throw new Error('Wheel must have at least one option.');
   }
@@ -65,7 +65,7 @@ function validateAndResolveOptions(configs) {
   }));
 }
 
-function summarizeResolvedOptions(rawOptions, resolvedOptions) {
+export function summarizeResolvedOptions(rawOptions, resolvedOptions) {
   const missingChanceCount = resolvedOptions.filter((opt) => opt.chance == null).length;
   const missingRatioCount = rawOptions.filter((opt) => opt.ratio == null).length;
   const autoChance =
@@ -81,8 +81,3 @@ function summarizeResolvedOptions(rawOptions, resolvedOptions) {
     totalRatio,
   };
 }
-
-module.exports = {
-  validateAndResolveOptions,
-  summarizeResolvedOptions,
-};

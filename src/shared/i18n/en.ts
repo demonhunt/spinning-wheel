@@ -3,7 +3,7 @@ const en = {
   loading: 'Loading...',
 
   // PlayerForm
-  welcome: 'Welcome! 🎉',
+  welcome: 'Welcome!',
   formSubtitle: 'Enter your info to spin the wheel',
   emailLabel: 'Email',
   emailPlaceholder: 'you@example.com',
@@ -16,7 +16,7 @@ const en = {
   // SpinningWheel
   spin: 'SPIN!',
   spinning: 'Spinning...',
-  congratulations: '🎉 Congratulations! 🎉',
+  congratulations: 'Congratulations!',
   youWon: 'You won:',
   returnToLogin: 'Return to Login',
 };
