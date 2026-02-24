@@ -9,6 +9,7 @@ import { logWinnerToGoogleSheet } from './winnerLogger';
 interface SpinningWheelProps {
   options: WheelOption[];
   playerInfo: PlayerInfo;
+  onSpinComplete: (winnerLabel: string) => void;
 }
 
 const MIN_WHEEL_SIZE = 280;
@@ -20,15 +21,18 @@ function getResponsiveWheelSize(): number {
   return Math.max(MIN_WHEEL_SIZE, Math.min(MAX_WHEEL_SIZE, targetByHeight, targetByWidth));
 }
 
-function SpinningWheel({ options, playerInfo }: SpinningWheelProps) {
+function SpinningWheel({ options, playerInfo, onSpinComplete }: SpinningWheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [centerLogo, setCenterLogo] = React.useState<HTMLImageElement | null>(null);
   const [wheelSize, setWheelSize] = React.useState<number>(() => getResponsiveWheelSize());
   const { t } = useTranslation();
 
-  const { rotation, spinning, winner, showResult, spin } = useWheelSpin({
+  const { rotation, spinning, spin } = useWheelSpin({
     options,
-    onSpinEnd: (winnerLabel) => logWinnerToGoogleSheet(playerInfo, winnerLabel),
+    onSpinEnd: (winnerLabel) => {
+      onSpinComplete(winnerLabel);
+      return logWinnerToGoogleSheet(playerInfo, winnerLabel);
+    },
   });
 
   useEffect(() => {
@@ -79,11 +83,6 @@ function SpinningWheel({ options, playerInfo }: SpinningWheelProps) {
     drawWheel(ctx, options, rotation, centerLogo);
   }, [centerLogo, options, rotation, wheelSize]);
 
-  const handleCloseTab = () => {
-    window.open('', '_self');
-    window.close();
-  };
-
   return (
     <div className="wheel-container">
       <div className="wheel-pointer" aria-hidden="true" />
@@ -96,19 +95,6 @@ function SpinningWheel({ options, playerInfo }: SpinningWheelProps) {
       <button className="spin-button" onClick={spin} disabled={spinning}>
         {spinning ? t.spinning : t.spin}
       </button>
-
-      {showResult && (
-        <div className="result-overlay">
-          <div className="result-modal">
-            <h2>{t.congratulations}</h2>
-            <p className="winner-label">{t.youWon}</p>
-            <p className="winner-name">{winner}</p>
-            <button className="finish-button" onClick={handleCloseTab}>
-              {t.returnToLogin}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

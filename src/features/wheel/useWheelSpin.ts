@@ -10,16 +10,12 @@ interface UseWheelSpinArgs {
 interface WheelSpinState {
   rotation: number;
   spinning: boolean;
-  winner: string | null;
-  showResult: boolean;
   spin: () => void;
 }
 
 export function useWheelSpin({ options, onSpinEnd }: UseWheelSpinArgs): WheelSpinState {
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
-  const [winner, setWinner] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState(false);
   const animationRef = useRef<number>(0);
   const rotationRef = useRef(0);
 
@@ -35,8 +31,6 @@ export function useWheelSpin({ options, onSpinEnd }: UseWheelSpinArgs): WheelSpi
     if (spinning) return;
 
     setSpinning(true);
-    setWinner(null);
-    setShowResult(false);
 
     const winnerIdx = pickWinnerIndex(options);
     const targetAngle = getTargetAngleForIndex(options, winnerIdx);
@@ -63,8 +57,6 @@ export function useWheelSpin({ options, onSpinEnd }: UseWheelSpinArgs): WheelSpi
 
       const winnerLabel = options[winnerIdx].label;
       setSpinning(false);
-      setWinner(winnerLabel);
-      setShowResult(true);
 
       if (onSpinEnd) {
         Promise.resolve(onSpinEnd(winnerLabel)).catch((err) => {
@@ -79,8 +71,6 @@ export function useWheelSpin({ options, onSpinEnd }: UseWheelSpinArgs): WheelSpi
   return {
     rotation,
     spinning,
-    winner,
-    showResult,
     spin,
   };
 }

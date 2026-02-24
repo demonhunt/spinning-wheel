@@ -12,6 +12,7 @@ type OptionsLoadStatus = 'loading' | 'success' | 'error';
 function App() {
   const [player, setPlayer] = useState<PlayerInfo | null>(null);
   const [queuedPlayer, setQueuedPlayer] = useState<PlayerInfo | null>(null);
+  const [winner, setWinner] = useState<string | null>(null);
   const [lang, setLang] = useState<Language>('vi');
   const [options, setOptions] = useState<WheelOption[] | null>(null);
   const [optionsStatus, setOptionsStatus] = useState<OptionsLoadStatus>('loading');
@@ -73,6 +74,10 @@ function App() {
     setQueuedPlayer(info);
   };
 
+  const handleSpinComplete = (winnerLabel: string) => {
+    setWinner(winnerLabel);
+  };
+
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
       <div className="App">
@@ -81,10 +86,20 @@ function App() {
           <button onClick={() => setLang('vi')} className={lang === 'vi' ? 'active' : ''} title="Tiếng Việt">🇻🇳</button>
         </div>
         <h1>{t.appTitle}</h1>
-        {canOpenWheel && player ? (
+        {winner ? (
+          <div className="result-page">
+            <div className="result-card">
+              <h2>{t.congratulations}</h2>
+              <p className="winner-label">{t.youWon}</p>
+              <p className="winner-name">{winner}</p>
+              <p className="result-note">{t.resultFollowupMessage}</p>
+            </div>
+          </div>
+        ) : canOpenWheel && player ? (
           <SpinningWheel
             options={options!}
             playerInfo={player}
+            onSpinComplete={handleSpinComplete}
           />) : (
           <PlayerForm onSubmit={handlePlayerSubmit} submitDisabled={!canOpenWheel} />
         )}

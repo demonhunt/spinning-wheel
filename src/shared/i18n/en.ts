@@ -18,7 +18,7 @@ const en = {
   spinning: 'Spinning...',
   congratulations: 'Congratulations!',
   youWon: 'You won:',
-  returnToLogin: 'Close',
+  resultFollowupMessage: 'Ms. Tam will contact you right away for consultation. Thank you!!',
 };
 
 export default en;

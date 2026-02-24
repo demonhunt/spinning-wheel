@@ -18,7 +18,7 @@ const vi = {
   spinning: 'Đang quay...',
   congratulations: 'Chúc mừng!!!',
   youWon: 'Bạn đã trúng:',
-  returnToLogin: 'Đóng',
+  resultFollowupMessage: 'Cô Tâm sẽ liên lạc tư vấn cho bạn ngay nhé. Cảm ơn!!',
 };
 
 export default vi;
