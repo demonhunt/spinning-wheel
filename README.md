@@ -46,7 +46,6 @@ scripts/
 
 Each option supports:
 - `label` (required): display text
-- `color` (required): slice color
 - `chance` (optional): winning probability in percent
 - `ratio` (optional): visual slice proportion
 

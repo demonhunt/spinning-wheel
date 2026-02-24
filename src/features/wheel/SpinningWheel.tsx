@@ -82,7 +82,7 @@ function SpinningWheel({ options, playerInfo, onFinish }: SpinningWheelProps) {
 
   return (
     <div className="wheel-container">
-      <div className="wheel-pointer">▼</div>
+      <div className="wheel-pointer" aria-hidden="true" />
       <canvas
         ref={canvasRef}
         width={wheelSize}

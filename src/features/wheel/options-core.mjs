@@ -17,9 +17,6 @@ export function validateAndResolveOptions(configs) {
     if (!opt.label || typeof opt.label !== 'string') {
       throw new Error(`Each option must have a "label" string. Got: ${JSON.stringify(opt)}`);
     }
-    if (!opt.color || typeof opt.color !== 'string') {
-      throw new Error(`Option "${opt.label}" must have a "color" string.`);
-    }
     if (opt.ratio != null && (typeof opt.ratio !== 'number' || opt.ratio <= 0)) {
       throw new Error(
         `Option "${opt.label}" has invalid ratio (${opt.ratio}). Ratio must be a positive number.`
@@ -59,7 +56,8 @@ export function validateAndResolveOptions(configs) {
   }
 
   return configs.map((opt) => ({
-    ...opt,
+    label: opt.label,
+    chance: opt.chance,
     ratio: opt.ratio == null ? 1 : opt.ratio,
     resolvedChance: opt.chance == null ? autoChance : opt.chance,
   }));

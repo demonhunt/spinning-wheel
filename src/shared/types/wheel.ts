@@ -1,7 +1,6 @@
 export interface WheelOptionConfig {
   label: string;
   ratio?: number;
-  color: string;
   chance?: number | null;
 }
 
