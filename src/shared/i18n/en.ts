@@ -18,7 +18,7 @@ const en = {
   spinning: 'Spinning...',
   congratulations: 'Congratulations!',
   youWon: 'You won:',
-  returnToLogin: 'Close Tab',
+  returnToLogin: 'Close',
 };
 
 export default en;

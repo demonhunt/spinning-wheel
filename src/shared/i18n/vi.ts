@@ -18,7 +18,7 @@ const vi = {
   spinning: 'Đang quay...',
   congratulations: 'Chúc mừng!!!',
   youWon: 'Bạn đã trúng:',
-  returnToLogin: 'Đóng tab',
+  returnToLogin: 'Đóng',
 };
 
 export default vi;
