@@ -5,7 +5,7 @@ const vi = {
   // PlayerForm
   welcome: 'Chào mừng!',
   formSubtitle: 'Nhập thông tin của bạn để quay vòng',
-  emailLabel: 'Email',
+  emailLabel: 'Email (không bắt buộc)',
   emailPlaceholder: 'ban@example.com',
   emailError: 'Vui lòng nhập địa chỉ email hợp lệ.',
   phoneLabel: 'Số điện thoại',
@@ -18,7 +18,7 @@ const vi = {
   spinning: 'Đang quay...',
   congratulations: 'Chúc mừng!!!',
   youWon: 'Bạn đã trúng:',
-  returnToLogin: 'Quay lại',
+  returnToLogin: 'Đóng tab',
 };
 
 export default vi;

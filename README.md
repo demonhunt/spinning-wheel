@@ -1,7 +1,7 @@
 # Spinning Wheel
 
 A localized React spinning wheel app with:
-- configurable wheel options from JSON
+- configurable wheel options loaded from Google Sheets (`options` sheet)
 - weighted win chance (`chance`)
 - independent visual slice size (`ratio`)
 - optional winner logging to Google Sheets
@@ -24,10 +24,9 @@ src/
       useWheelSpin.ts          # spin animation state + winner lifecycle
       wheelMath.ts             # random winner + landing angle math
       winnerLogger.ts          # Google Sheet logging side effect
+      optionsLoader.ts         # runtime option fetch from Google Sheets
       options.ts               # typed runtime wrapper for option parser
-      options-core.mjs         # shared parser/validator (used by app + build script)
-      config/
-        wheel-options.json
+      options-core.mjs         # shared parser/validator
 
   shared/
     i18n/
@@ -37,14 +36,11 @@ src/
     types/
       player.ts
       wheel.ts
-
-scripts/
-  validate-options.js          # build-time option validation (reuses options-core.js)
 ```
 
-## Data Model (`wheel-options.json`)
+## Data Model (`options` sheet)
 
-Each option supports:
+Each row supports:
 - `label` (required): display text
 - `chance` (optional): winning probability in percent
 - `ratio` (optional): visual slice proportion
@@ -55,9 +51,8 @@ Rules:
 
 ## Scripts
 
-- `npm start`: validate options, then run dev server
-- `npm run validate`: validate wheel options only
-- `npm run build`: validate options, then create production build
+- `npm start`: run dev server
+- `npm run build`: create production build
 - `npm run deploy`: publish `build/` to GitHub Pages
 
 ## Environment Variables
@@ -68,4 +63,8 @@ Create `.env.local` if needed:
 REACT_APP_GOOGLE_SHEET_URL=your_google_apps_script_url
 ```
 
-If not set, winner logging is skipped.
+This URL is required at runtime:
+- `GET REACT_APP_GOOGLE_SHEET_URL` loads wheel options from sheet `options`
+- `POST REACT_APP_GOOGLE_SHEET_URL` writes spin results to sheet `results`
+
+If options cannot be fetched or fail validation, the app shows an error and does not load the wheel.

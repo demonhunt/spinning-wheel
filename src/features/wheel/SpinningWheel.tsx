@@ -9,7 +9,6 @@ import { logWinnerToGoogleSheet } from './winnerLogger';
 interface SpinningWheelProps {
   options: WheelOption[];
   playerInfo: PlayerInfo;
-  onFinish: () => void;
 }
 
 const MIN_WHEEL_SIZE = 280;
@@ -21,7 +20,7 @@ function getResponsiveWheelSize(): number {
   return Math.max(MIN_WHEEL_SIZE, Math.min(MAX_WHEEL_SIZE, targetByHeight, targetByWidth));
 }
 
-function SpinningWheel({ options, playerInfo, onFinish }: SpinningWheelProps) {
+function SpinningWheel({ options, playerInfo }: SpinningWheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [centerLogo, setCenterLogo] = React.useState<HTMLImageElement | null>(null);
   const [wheelSize, setWheelSize] = React.useState<number>(() => getResponsiveWheelSize());
@@ -80,6 +79,11 @@ function SpinningWheel({ options, playerInfo, onFinish }: SpinningWheelProps) {
     drawWheel(ctx, options, rotation, centerLogo);
   }, [centerLogo, options, rotation, wheelSize]);
 
+  const handleCloseTab = () => {
+    window.open('', '_self');
+    window.close();
+  };
+
   return (
     <div className="wheel-container">
       <div className="wheel-pointer" aria-hidden="true" />
@@ -99,7 +103,7 @@ function SpinningWheel({ options, playerInfo, onFinish }: SpinningWheelProps) {
             <h2>{t.congratulations}</h2>
             <p className="winner-label">{t.youWon}</p>
             <p className="winner-name">{winner}</p>
-            <button className="finish-button" onClick={onFinish}>
+            <button className="finish-button" onClick={handleCloseTab}>
               {t.returnToLogin}
             </button>
           </div>

@@ -5,7 +5,7 @@ const en = {
   // PlayerForm
   welcome: 'Welcome!',
   formSubtitle: 'Enter your info to spin the wheel',
-  emailLabel: 'Email',
+  emailLabel: 'Email (optional)',
   emailPlaceholder: 'you@example.com',
   emailError: 'Please enter a valid email address.',
   phoneLabel: 'Phone Number',
@@ -18,7 +18,7 @@ const en = {
   spinning: 'Spinning...',
   congratulations: 'Congratulations!',
   youWon: 'You won:',
-  returnToLogin: 'Return to Login',
+  returnToLogin: 'Close Tab',
 };
 
 export default en;

@@ -1,6 +1,5 @@
 /**
- * Shared wheel option parser/validator used by both runtime and build-time validation.
- * Keep this file in plain JS so Node scripts can require it without a TS toolchain.
+ * Shared wheel option parser/validator used by runtime option loading.
  */
 export function validateAndResolveOptions(configs) {
   if (!Array.isArray(configs) || configs.length === 0) {

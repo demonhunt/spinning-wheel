@@ -16,9 +16,10 @@ export async function logWinnerToGoogleSheet(playerInfo: PlayerInfo, winnerLabel
   });
 
   try {
-    await fetch(`${GOOGLE_SHEET_URL}?${params.toString()}`, {
-      method: 'GET',
+    await fetch(GOOGLE_SHEET_URL, {
+      method: 'POST',
       mode: 'no-cors',
+      body: params,
     });
   } catch (err) {
     console.error('Failed to log to Google Sheet:', err);
