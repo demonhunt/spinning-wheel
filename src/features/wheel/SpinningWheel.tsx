@@ -10,18 +10,25 @@ interface SpinningWheelProps {
   options: WheelOption[];
   playerInfo: PlayerInfo;
   onSpinComplete: (winnerLabel: string) => void;
+  disableWinnerLog?: boolean;
 }
 
-const MIN_WHEEL_SIZE = 280;
+const MIN_WHEEL_SIZE = 220;
 const MAX_WHEEL_SIZE = 920;
 
 function getResponsiveWheelSize(): number {
-  const targetByHeight = Math.floor(window.innerHeight * 0.8);
-  const targetByWidth = Math.floor(window.innerWidth * 0.92);
+  const isMobile = window.innerWidth <= 768;
+  const targetByHeight = Math.floor(window.innerHeight * (isMobile ? 0.62 : 0.8));
+  const targetByWidth = Math.floor(window.innerWidth - (isMobile ? 16 : 24));
   return Math.max(MIN_WHEEL_SIZE, Math.min(MAX_WHEEL_SIZE, targetByHeight, targetByWidth));
 }
 
-function SpinningWheel({ options, playerInfo, onSpinComplete }: SpinningWheelProps) {
+function SpinningWheel({
+  options,
+  playerInfo,
+  onSpinComplete,
+  disableWinnerLog = false,
+}: SpinningWheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [centerLogo, setCenterLogo] = React.useState<HTMLImageElement | null>(null);
   const [wheelSize, setWheelSize] = React.useState<number>(() => getResponsiveWheelSize());
@@ -31,6 +38,7 @@ function SpinningWheel({ options, playerInfo, onSpinComplete }: SpinningWheelPro
     options,
     onSpinEnd: (winnerLabel) => {
       onSpinComplete(winnerLabel);
+      if (disableWinnerLog) return;
       return logWinnerToGoogleSheet(playerInfo, winnerLabel);
     },
   });

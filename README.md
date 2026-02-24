@@ -19,7 +19,7 @@ src/
       PlayerForm.tsx
 
     wheel/
-      SpinningWheel.tsx        # UI composition for wheel + result modal
+      SpinningWheel.tsx        # UI composition for wheel screen
       wheelCanvas.ts           # canvas drawing and label layout
       useWheelSpin.ts          # spin animation state + winner lifecycle
       wheelMath.ts             # random winner + landing angle math
@@ -68,3 +68,16 @@ This URL is required at runtime:
 - `POST REACT_APP_GOOGLE_SHEET_URL` writes spin results to sheet `results`
 
 If options cannot be fetched or fail validation, the app shows an error and does not load the wheel.
+
+## Debug Endpoint
+
+Use the built-in debug wheel endpoint to test drawing quickly with preloaded local options (no Google Sheet/form required):
+
+- `http://localhost:3000/debug-wheel`
+- `http://localhost:3000/#/debug-wheel`
+- `http://localhost:3000/?debugWheel=1`
+
+For GitHub Pages, prefer hash/query variants:
+
+- `https://<user>.github.io/<repo>/#/debug-wheel`
+- `https://<user>.github.io/<repo>/?debugWheel=1`

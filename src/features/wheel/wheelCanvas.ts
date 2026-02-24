@@ -66,47 +66,30 @@ function wrapText(
   let currentLine = '';
 
   for (const word of words) {
-    if (ctx.measureText(word).width > maxWidth) {
-      let chunk = '';
-      for (const ch of word) {
-        const testChunk = chunk + ch;
-        if (ctx.measureText(testChunk).width > maxWidth && chunk) {
-          if (currentLine) {
-            lines.push(currentLine);
-            currentLine = '';
-          }
-          lines.push(chunk);
-          chunk = ch;
-        } else {
-          chunk = testChunk;
-        }
-      }
-      if (chunk) {
-        if (currentLine) {
-          const testLine = `${currentLine} ${chunk}`;
-          if (ctx.measureText(testLine).width <= maxWidth) {
-            currentLine = testLine;
-          } else {
-            lines.push(currentLine);
-            currentLine = chunk;
-          }
-        } else {
-          currentLine = chunk;
-        }
-      }
+    const testLine = currentLine ? `${currentLine} ${word}` : word;
+    if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+      lines.push(currentLine);
+      currentLine = word;
     } else {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      if (ctx.measureText(testLine).width > maxWidth && currentLine) {
-        lines.push(currentLine);
-        currentLine = word;
-      } else {
-        currentLine = testLine;
-      }
+      currentLine = testLine;
     }
   }
 
   if (currentLine) lines.push(currentLine);
   return lines;
+}
+
+function truncateToWidth(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+): string {
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let trimmed = text;
+  while (trimmed.length > 0 && ctx.measureText(`${trimmed}...`).width > maxWidth) {
+    trimmed = trimmed.slice(0, -1);
+  }
+  return trimmed ? `${trimmed}...` : '...';
 }
 
 function autoFontSize(
@@ -135,11 +118,11 @@ function autoFontSize(
   const limited = lines.slice(0, maxLines);
 
   if (lines.length > maxLines && limited.length > 0) {
-    let last = limited[limited.length - 1];
-    while (last.length > 0 && ctx.measureText(`${last}...`).width > maxWidth) {
-      last = last.slice(0, -1);
-    }
-    limited[limited.length - 1] = last ? `${last}...` : '...';
+    limited[limited.length - 1] = truncateToWidth(ctx, limited[limited.length - 1], maxWidth);
+  }
+
+  for (let i = 0; i < limited.length; i++) {
+    limited[i] = truncateToWidth(ctx, limited[i], maxWidth);
   }
 
   return { size: minSize, lines: limited };
@@ -155,8 +138,8 @@ export function drawWheel(
   const wheelSize = Math.min(ctx.canvas.width, ctx.canvas.height);
   const center = wheelSize / 2;
   const radius = center - 10;
-  // Hub radius scales with wheel size and is clamped between 52 and 156 px.
-  const centerHubRadius = Math.max(52, Math.min(156, Math.round(wheelSize * 1.00)));
+  // Keep the center large but balanced on mobile so labels remain readable.
+  const centerHubRadius = Math.max(52, Math.min(112, Math.round(wheelSize * 0.22)));
 
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -200,7 +183,7 @@ export function drawWheel(
     const maxTextHeight = Math.max(14, radialSpace * 0.85);
     const maxLines = 3;
     // Scale label font bounds with wheel size, then auto-fit within slice constraints.
-    const baseFontSize = Math.max(12, Math.min(30, Math.round(wheelSize * 0.025)));
+    const baseFontSize = Math.max(11, Math.min(34, Math.round(wheelSize * 0.038)));
     const minFontSize = Math.max(8, Math.round(baseFontSize * 0.55));
 
     const { size: fontSize, lines } = autoFontSize(
