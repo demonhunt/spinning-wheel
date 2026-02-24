@@ -1,8 +1,58 @@
 import { WheelOption } from '../../shared/types/wheel';
 
-export const WHEEL_SIZE = 400;
-const CENTER = WHEEL_SIZE / 2;
-const RADIUS = CENTER - 10;
+// 1.2 = 120% zoom for the center logo image inside the hub clip.
+const CENTER_LOGO_ZOOM = 1.2;
+const WHEEL_BLUE = '#0b74de';
+const WHEEL_WHITE = '#ffffff';
+
+function drawCenterHub(
+  ctx: CanvasRenderingContext2D,
+  centerLogo: HTMLImageElement | null,
+  center: number,
+  centerHubRadius: number
+): void {
+  // Clip to a circle so the center logo always stays inside the hub.
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(center, center, centerHubRadius, 0, 2 * Math.PI);
+  ctx.closePath();
+  ctx.clip();
+
+  if (centerLogo) {
+    const hubDiameter = centerHubRadius * 2;
+    // Cover-fit the image, then apply extra zoom.
+    const scale = Math.max(
+      hubDiameter / centerLogo.naturalWidth,
+      hubDiameter / centerLogo.naturalHeight
+    ) * CENTER_LOGO_ZOOM;
+    const drawWidth = centerLogo.naturalWidth * scale;
+    const drawHeight = centerLogo.naturalHeight * scale;
+    const drawX = center - drawWidth / 2;
+    const drawY = center - drawHeight / 2;
+
+    ctx.drawImage(centerLogo, drawX, drawY, drawWidth, drawHeight);
+  } else {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(
+      center - centerHubRadius,
+      center - centerHubRadius,
+      centerHubRadius * 2,
+      centerHubRadius * 2
+    );
+  }
+
+  ctx.restore();
+  ctx.beginPath();
+  ctx.arc(center, center, centerHubRadius, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(center, center, centerHubRadius, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
 
 function wrapText(
   ctx: CanvasRenderingContext2D,
@@ -98,51 +148,68 @@ function autoFontSize(
 export function drawWheel(
   ctx: CanvasRenderingContext2D,
   options: WheelOption[],
-  currentRotation: number
+  currentRotation: number,
+  centerLogo: HTMLImageElement | null = null
 ): void {
-  ctx.clearRect(0, 0, WHEEL_SIZE, WHEEL_SIZE);
+  // Derive all geometry from the current canvas size for responsive rendering.
+  const wheelSize = Math.min(ctx.canvas.width, ctx.canvas.height);
+  const center = wheelSize / 2;
+  const radius = center - 10;
+  // Hub radius scales with wheel size and is clamped between 52 and 156 px.
+  const centerHubRadius = Math.max(52, Math.min(156, Math.round(wheelSize * 1.00)));
+
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   const totalRatio = options.reduce((sum, opt) => sum + opt.ratio, 0);
   let startAngle = currentRotation;
 
-  for (const option of options) {
+  // Draw each option as a slice whose angle is proportional to its ratio.
+  for (let index = 0; index < options.length; index++) {
+    const option = options[index];
     const sliceAngle = (option.ratio / totalRatio) * 2 * Math.PI;
+    const isBlueSlice = index % 2 === 1;
+    const sliceBackgroundColor = isBlueSlice ? WHEEL_BLUE : WHEEL_WHITE;
+    const sliceTextColor = isBlueSlice ? WHEEL_WHITE : WHEEL_BLUE;
 
     ctx.beginPath();
-    ctx.moveTo(CENTER, CENTER);
-    ctx.arc(CENTER, CENTER, RADIUS, startAngle, startAngle + sliceAngle);
+    ctx.moveTo(center, center);
+    ctx.arc(center, center, radius, startAngle, startAngle + sliceAngle);
     ctx.closePath();
-    ctx.fillStyle = option.color;
+    ctx.fillStyle = sliceBackgroundColor;
     ctx.fill();
-    ctx.strokeStyle = '#fff';
+    ctx.strokeStyle = sliceTextColor;
     ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.save();
-    ctx.translate(CENTER, CENTER);
+    ctx.translate(center, center);
     ctx.rotate(startAngle + sliceAngle / 2);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = sliceTextColor;
     ctx.shadowColor = 'rgba(0,0,0,0.5)';
     ctx.shadowBlur = 3;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    const innerPadding = 52;
+    // Keep text inside a readable radial band between hub and outer edge.
+    const innerPadding = centerHubRadius + 14;
     const outerPadding = 14;
-    const radialSpace = Math.max(20, RADIUS - innerPadding - outerPadding);
+    const radialSpace = Math.max(20, radius - innerPadding - outerPadding);
     const textX = innerPadding + radialSpace / 2;
     const maxWidthByArc = Math.max(24, sliceAngle * textX - 10);
     const maxWidth = Math.max(24, Math.min(radialSpace, maxWidthByArc));
     const maxTextHeight = Math.max(14, radialSpace * 0.85);
     const maxLines = 3;
+    // Scale label font bounds with wheel size, then auto-fit within slice constraints.
+    const baseFontSize = Math.max(12, Math.min(30, Math.round(wheelSize * 0.025)));
+    const minFontSize = Math.max(8, Math.round(baseFontSize * 0.55));
 
     const { size: fontSize, lines } = autoFontSize(
       ctx,
       option.label,
       maxWidth,
       maxTextHeight,
-      14,
-      8,
+      baseFontSize,
+      minFontSize,
       maxLines
     );
     ctx.font = `bold ${fontSize}px Arial`;
@@ -158,11 +225,6 @@ export function drawWheel(
     startAngle += sliceAngle;
   }
 
-  ctx.beginPath();
-  ctx.arc(CENTER, CENTER, 20, 0, 2 * Math.PI);
-  ctx.fillStyle = '#fff';
-  ctx.fill();
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  // Draw the center hub (logo + ring) after slices so it sits on top.
+  drawCenterHub(ctx, centerLogo, center, centerHubRadius);
 }
