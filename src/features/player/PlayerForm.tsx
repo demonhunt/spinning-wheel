@@ -11,7 +11,12 @@ function PlayerForm({ onSubmit, submitDisabled = false }: PlayerFormProps) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
+  const phoneInputRef = React.useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
+
+  React.useEffect(() => {
+    phoneInputRef.current?.focus();
+  }, []);
 
   const validate = () => {
     const newErrors: { email?: string; phone?: string } = {};
@@ -45,6 +50,8 @@ function PlayerForm({ onSubmit, submitDisabled = false }: PlayerFormProps) {
             {t.phoneLabel} <span className="required-indicator" aria-hidden="true">*</span>
           </label>
           <input
+            ref={phoneInputRef}
+            autoFocus
             id="phone"
             type="tel"
             placeholder={t.phonePlaceholder}
