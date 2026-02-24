@@ -33,7 +33,7 @@ function PlayerForm({ onSubmit, submitDisabled = false }: PlayerFormProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (validate()) {
       onSubmit({ email: email.trim(), phone: phone.trim() });
