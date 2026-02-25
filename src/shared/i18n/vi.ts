@@ -11,7 +11,7 @@ const vi = {
   phoneLabel: 'Số điện thoại',
   phonePlaceholder: '+84 234 567 890',
   phoneError: 'Vui lòng nhập số điện thoại hợp lệ.',
-  letsPlay: 'Chơi thôi!',
+  letsPlay: 'Quay thôi!',
 
   // SpinningWheel
   spin: 'QUAY!',
@@ -19,6 +19,8 @@ const vi = {
   congratulations: 'Chúc mừng!!!',
   youWon: 'Bạn đã nhận được:',
   resultFollowupMessage: 'Cô Tâm sẽ liên hệ và tư vấn cho bạn ngay nhé. Cảm ơn!!',
+  contactName: 'Ms.Tam_English Class',
+  contactPhone: '0373.731.398',
 };
 
 export default vi;

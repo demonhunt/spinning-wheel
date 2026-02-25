@@ -19,6 +19,8 @@ const en = {
   congratulations: 'Congratulations!',
   youWon: 'You won:',
   resultFollowupMessage: 'Ms. Tam will contact you right away for consultation. Thank you!!',
+  contactName: 'Ms.Tam_English Class',
+  contactPhone: '0373.731.398',
 };
 
 export default en;

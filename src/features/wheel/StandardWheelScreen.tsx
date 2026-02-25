@@ -101,6 +101,13 @@ function StandardWheelScreen({ lang, onChangeLanguage }: StandardWheelScreenProp
               <p className="winner-name">{winner}</p>
               <p className="result-note">{t.resultFollowupMessage}</p>
             </div>
+            <div className="result-contact-bar">
+              <span className="contact-label">{t.contactName}</span>
+              <a className="contact-badge contact-phone-badge" href={`tel:${t.contactPhone.replace(/\./g, '')}`}>
+                <svg className="phone-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.57.57.55 0 1.01.46 1.01 1.01v3.49c0 .55-.46 1.01-1.01 1.01C10.81 21.02 2.98 13.19 2.98 3.98c0-.55.46-1.01 1.01-1.01H7.5c.55 0 1.01.46 1.01 1.01 0 1.25.2 2.45.57 3.57.11.35.03.74-.24 1.01l-2.22 2.23z"/></svg>
+                {t.contactPhone}
+              </a>
+            </div>
           </div>
         );
       case 'wheel':
