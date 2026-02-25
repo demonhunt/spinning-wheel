@@ -17,8 +17,8 @@ const vi = {
   spin: 'QUAY!',
   spinning: 'Đang quay...',
   congratulations: 'Chúc mừng!!!',
-  youWon: 'Bạn đã trúng:',
-  resultFollowupMessage: 'Cô Tâm sẽ liên lạc tư vấn cho bạn ngay nhé. Cảm ơn!!',
+  youWon: 'Bạn đã nhận được:',
+  resultFollowupMessage: 'Cô Tâm sẽ liên hệ và tư vấn cho bạn ngay nhé. Cảm ơn!!',
 };
 
 export default vi;
