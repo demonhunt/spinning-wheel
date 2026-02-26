@@ -5,9 +5,10 @@ import { PlayerInfo } from '../../shared/types/player';
 interface PlayerFormProps {
   onSubmit: (info: PlayerInfo) => void;
   submitDisabled?: boolean;
+  inline?: boolean;
 }
 
-function PlayerForm({ onSubmit, submitDisabled = false }: PlayerFormProps) {
+function PlayerForm({ onSubmit, submitDisabled = false, inline = false }: PlayerFormProps) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
@@ -41,9 +42,9 @@ function PlayerForm({ onSubmit, submitDisabled = false }: PlayerFormProps) {
   };
 
   return (
-    <div className="form-container">
-      <h2>{t.welcome}</h2>
-      <p className="form-subtitle">{t.formSubtitle}</p>
+    <div className={`form-container${inline ? ' form-inline' : ''}`}>
+      {!inline && <h2>{t.claimPrizeTitle}</h2>}
+      {!inline && <p className="form-subtitle">{t.formSubtitle}</p>}
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-field">
           <label htmlFor="phone">
@@ -72,7 +73,7 @@ function PlayerForm({ onSubmit, submitDisabled = false }: PlayerFormProps) {
           {errors.email && <span className="form-error">{errors.email}</span>}
         </div>
         <button type="submit" className="form-submit" disabled={submitDisabled}>
-          {t.letsPlay}
+          {t.submitInfo}
         </button>
       </form>
     </div>

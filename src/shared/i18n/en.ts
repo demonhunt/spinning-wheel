@@ -3,15 +3,15 @@ const en = {
   loading: 'Loading...',
 
   // PlayerForm
-  welcome: 'Welcome!',
-  formSubtitle: 'Enter your info to spin the wheel',
+  claimPrizeTitle: 'Claim Your Prize!',
+  formSubtitle: 'Enter your info to claim your prize',
   emailLabel: 'Email (optional)',
   emailPlaceholder: 'you@example.com',
   emailError: 'Please enter a valid email address.',
   phoneLabel: 'Phone Number',
   phonePlaceholder: '+1 234 567 8900',
   phoneError: 'Please enter a valid phone number.',
-  letsPlay: "Let's Play!",
+  submitInfo: 'Claim Prize!',
 
   // SpinningWheel
   spin: 'SPIN!',

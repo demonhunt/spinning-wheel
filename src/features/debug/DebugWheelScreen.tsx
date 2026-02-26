@@ -13,7 +13,6 @@ function DebugWheelScreen({ lang, onChangeLanguage }: DebugWheelScreenProps) {
     <AppShell appClassName="wheel-active" lang={lang} onChangeLanguage={onChangeLanguage}>
       <SpinningWheel
         options={DEBUG_WHEEL_OPTIONS}
-        playerInfo={DEBUG_PLAYER}
         onSpinComplete={() => {}}
         disableWinnerLog
       />

@@ -266,6 +266,25 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
+.result-card-with-form {
+  padding: 0;
+  overflow: hidden;
+}
+
+.result-card-header {
+  padding: 34px 28px 20px;
+  text-align: center;
+}
+
+.result-card-with-form .form-inline {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  border-radius: 0;
+  max-width: 100%;
+  padding: 0 28px 28px;
+}
+
 .result-card h2 {
   color: #f1c40f;
   margin: 0 0 12px;

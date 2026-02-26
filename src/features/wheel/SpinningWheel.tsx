@@ -1,14 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from '../../shared/i18n';
-import { PlayerInfo } from '../../shared/types/player';
 import { WheelOption } from '../../shared/types/wheel';
 import { drawWheel } from './wheelCanvas';
 import { useWheelSpin } from './useWheelSpin';
-import { logWinnerToGoogleSheet } from './winnerLogger';
 
 interface SpinningWheelProps {
   options: WheelOption[];
-  playerInfo: PlayerInfo;
   onSpinComplete: (winnerLabel: string) => void;
   disableWinnerLog?: boolean;
 }
@@ -25,7 +22,6 @@ function getResponsiveWheelSize(): number {
 
 function SpinningWheel({
   options,
-  playerInfo,
   onSpinComplete,
   disableWinnerLog = false,
 }: SpinningWheelProps) {
@@ -38,8 +34,6 @@ function SpinningWheel({
     options,
     onSpinEnd: (winnerLabel) => {
       onSpinComplete(winnerLabel);
-      if (disableWinnerLog) return;
-      return logWinnerToGoogleSheet(playerInfo, winnerLabel);
     },
   });
 

@@ -6,9 +6,10 @@ import { WheelOption } from '../../shared/types/wheel';
 import AppShell from '../../shared/ui/AppShell';
 import { loadWheelOptionsFromGoogleSheet } from './optionsLoader';
 import SpinningWheel from './SpinningWheel';
+import { logWinnerToGoogleSheet } from './winnerLogger';
 
 type OptionsLoadStatus = 'loading' | 'success' | 'error';
-type StandardScreen = 'form' | 'wheel' | 'result';
+type StandardScreen = 'wheel' | 'result' | 'done';
 
 interface StandardWheelScreenProps {
   lang: Language;
@@ -16,9 +17,8 @@ interface StandardWheelScreenProps {
 }
 
 function StandardWheelScreen({ lang, onChangeLanguage }: StandardWheelScreenProps) {
-  const [player, setPlayer] = useState<PlayerInfo | null>(null);
-  const [queuedPlayer, setQueuedPlayer] = useState<PlayerInfo | null>(null);
   const [winner, setWinner] = useState<string | null>(null);
+  const [playerSubmitted, setPlayerSubmitted] = useState(false);
   const [options, setOptions] = useState<WheelOption[] | null>(null);
   const [optionsStatus, setOptionsStatus] = useState<OptionsLoadStatus>('loading');
   const [optionsProgress, setOptionsProgress] = useState<number>(6);
@@ -63,36 +63,30 @@ function StandardWheelScreen({ lang, onChangeLanguage }: StandardWheelScreenProp
     };
   }, []);
 
-  useEffect(() => {
-    if (optionsStatus === 'success' && options && queuedPlayer) {
-      setPlayer(queuedPlayer);
-      setQueuedPlayer(null);
-    }
-  }, [options, optionsStatus, queuedPlayer]);
-
   const optionsReady = optionsStatus === 'success' && options !== null;
 
   const handlePlayerSubmit = (info: PlayerInfo) => {
-    if (optionsReady) {
-      setPlayer(info);
-      return;
+    setPlayerSubmitted(true);
+    if (winner) {
+      logWinnerToGoogleSheet(info, winner);
     }
-    setQueuedPlayer(info);
   };
 
-  const screen: StandardScreen = winner
-    ? 'result'
-    : (optionsReady && player ? 'wheel' : 'form');
+  const screen: StandardScreen = playerSubmitted
+    ? 'done'
+    : winner
+      ? 'result'
+      : 'wheel';
 
   const appScreenClass = screen === 'wheel'
     ? 'wheel-active'
-    : screen === 'form'
+    : screen === 'result'
       ? 'form-active'
       : '';
 
   const renderMainContent = () => {
     switch (screen) {
-      case 'result':
+      case 'done':
         return (
           <div className="result-page">
             <div className="result-card">
@@ -110,21 +104,26 @@ function StandardWheelScreen({ lang, onChangeLanguage }: StandardWheelScreenProp
             </div>
           </div>
         );
+      case 'result':
+        return (
+          <div className="result-page">
+            <div className="result-card result-card-with-form">
+              <div className="result-card-header">
+                <h2>{t.congratulations}</h2>
+                <p className="winner-label">{t.youWon}</p>
+                <p className="winner-name">{winner}</p>
+              </div>
+              <PlayerForm onSubmit={handlePlayerSubmit} inline />
+            </div>
+          </div>
+        );
       case 'wheel':
-        if (!options || !player) return null;
+      default:
+        if (!optionsReady || !options) return null;
         return (
           <SpinningWheel
             options={options}
-            playerInfo={player}
             onSpinComplete={setWinner}
-          />
-        );
-      case 'form':
-      default:
-        return (
-          <PlayerForm
-            onSubmit={handlePlayerSubmit}
-            submitDisabled={!optionsReady}
           />
         );
     }
@@ -134,16 +133,12 @@ function StandardWheelScreen({ lang, onChangeLanguage }: StandardWheelScreenProp
     <AppShell appClassName={appScreenClass} lang={lang} onChangeLanguage={onChangeLanguage}>
       {renderMainContent()}
       {optionsStatus === 'loading' && (
-        <div
+        <progress
           className="options-progress-strip"
-          role="progressbar"
           aria-label={t.loading}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(optionsProgress)}
-        >
-          <div className="options-progress-strip-fill" style={{ width: `${Math.round(optionsProgress)}%` }} />
-        </div>
+          value={Math.round(optionsProgress)}
+          max={100}
+        />
       )}
     </AppShell>
   );
