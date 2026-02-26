@@ -18,7 +18,7 @@ const vi = {
   spinning: 'Đang quay...',
   congratulations: 'Chúc mừng!!!',
   youWon: 'Bạn đã nhận được:',
-  resultFollowupMessage: 'Cô Tâm sẽ liên lạc tư vấn cho bạn ngay nhé. Cảm ơn!!',
+  resultFollowupMessage: 'Cô Tâm sẽ liên hệ và tư vấn cho bạn ngay nhé. Cảm ơn!!',
   contactName: 'Ms.Tam_English Class',
   contactPhone: '0373.731.398',
 };
